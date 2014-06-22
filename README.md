@@ -1,0 +1,32 @@
+# Volume & Partition Check #
+
+<h1><img src="http://discussions.apple.com/servlet/JiveServlet/showImage/2-18359334-115214/images.jpeg" valign="middle"/></h1>
+
+About
+--------
+
+This is an open source (GPL v3 or later) wrapper script to 'diskutil' which is designed to make checking DAS (directly attached storage) as simple as possible.
+
+License: [GNU GPL 3.0 License][1]
+
+
+Requirements
+---------
+ - Mac OS X 10.6 or later (may work with earlier versions of OS X)
+ - Directly Attached Stroage
+
+
+Usage Instructions
+---------
+
+- Run the volume_check.rb script and pass in the path to a log file. Note, this log file may be overwritten so make sure there is nothing important inside.
+- Check the error return code. If it is not 0 then there is a problem with one or more of the checked volumes. Open the log file to see additional details.
+
+Notes relating to using the core script within another system
+---------
+
+Should you wish to use this script in another system it is important that you adhear to the licence agreement.
+
+
+  [1]: http://www.gnu.org/copyleft/gpl.html
+

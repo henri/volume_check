@@ -22,6 +22,10 @@ Usage Instructions
 - Run the volume_check.rb script and pass in the path to a log file. Note, this log file may be overwritten so make sure there is nothing important inside.
 - Check the error return code. If it is not 0 then there is a problem with one or more of the checked volumes. Open the log file to see additional details.
 
+Helpful Links 
+---------
+The [LBackup Monitoring Storage Systems][2] page provides you with a simple example script which uses sendEmail to send out notifications relating to issues with the file systmems detected by volume_check.rb.
+
 Notes relating to using the core script within another system
 ---------
 
@@ -29,4 +33,5 @@ Should you wish to use this script in another system it is important that you ad
 
 
   [1]: http://www.gnu.org/copyleft/gpl.html
+  [2]: http://www.lbackup.org/monitoring_backup_storage
 

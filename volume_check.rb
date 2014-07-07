@@ -3,7 +3,9 @@
 # Check DAS Volumes and Disks
 # Copyright Henri Shustak 2014
 
-# Version 1.0 initial release
+# Versions
+# 1.0 initial release
+# 1.1 resolved path issue related to diskutil (work around)
 
 # Internal variables
 @volume_or_disk_error_detected = false
@@ -17,6 +19,7 @@
 @disk_check_return_codes = []
 @disk_check_return_results = []
 @log_file_output_path = ARGV[0]
+@diskutil_absolute_path="/usr/sbin/diskutil"
 
 # Initial checks
 if ARGV.length != 1
@@ -24,18 +27,18 @@ if ARGV.length != 1
 	exit -1
 end
 
-# Ensure that "/usr/sbin/" is part of the search path
+# Ensure that "/usr/sbin/" is part of the search path - for some reason diskutil is still not found. Added an absolute path.
 ENV["PATH"] = `echo $PATH:/usr/sbin/`
 
 # Check attached volumes which are disks
 volumes_to_check = `df -l | grep /dev/disk | awk -F "%    " '{print $2}'`.split("\n")
-disks_to_check = `diskutil list | grep ^/dev/`
+disks_to_check = `#{@diskutil_absolute_path} list | grep ^/dev/`
 
 def check_volume (volume2check)
 	#puts "Checking Volume : #{volume2check}"
 	@volume_check_name[@volume_check_id] = volume2check.to_s
 	@volume_check_device_name[@volume_check_id] = `df "#{volume2check.to_s}" | tail -n 1 | awk '{print $1}' 2> /dev/null`.chomp
-	verify_volume_result = `diskutil verifyVolume "#{volume2check.to_s}" 2>&1`
+	verify_volume_result = `#{@diskutil_absolute_path} verifyVolume "#{volume2check.to_s}" 2>&1`
 	@volume_check_return_codes[@volume_check_id] = $?.exitstatus
 	@volume_check_return_results[@volume_check_id] = verify_volume_result
 	@volume_or_disk_error_detected = true if @volume_check_return_codes[@volume_check_id] != 0
@@ -44,7 +47,7 @@ end
 def check_disk (disk2check)
     #puts "Checking Disk : #{disk2check.to_s}"
 	@disk_check_name[@disk_check_id] = disk2check.to_s
-    verify_disk_result = `diskutil verifyDisk "#{disk2check.to_s}" 2>&1`
+    verify_disk_result = `#{@diskutil_absolute_path} verifyDisk "#{disk2check.to_s}" 2>&1`
 	@disk_check_return_codes[@disk_check_id] = $?.exitstatus
 	@disk_check_return_results[@disk_check_id] = verify_disk_result
 	@volume_or_disk_error_detected = true if @disk_check_return_codes[@disk_check_id] != 0
@@ -57,7 +60,7 @@ volumes_to_check.each { |v|
 
 disks_to_check.each { |d|
 	# only checks this disk if the disk features a GUID parition map
-	`diskutil info #{d.chomp} | grep "Content (IOContent):      GUID_partition_scheme" 2> /dev/null`
+	`#{@diskutil_absolute_path} info #{d.chomp} | grep "Content (IOContent):      GUID_partition_scheme" 2> /dev/null`
 	if $? == 0
         	check_disk(d.chomp)
         	@disk_check_id += 1

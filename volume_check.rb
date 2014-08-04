@@ -71,7 +71,9 @@ disks_to_check.each { |d|
 def dump_data_to_log (log_file)
 	@disk_check_id = 0
 	@disk_check_return_codes.each { |d|
-		`echo "Verification Return Status : #{@disk_check_return_codes[@disk_check_id].to_s}\tDisk Device Name : #{@disk_check_name[@disk_check_id].to_s}" >> "#{log_file}"`
+		disk_manufacture = `#{@diskutil_absolute_path} info #{@disk_check_name[@disk_check_id].to_s} | grep "Device / Media Name:" | awk -F "Device / Media Name:      " '{print $2}'`.chomp
+		disk_capacity = `#{@diskutil_absolute_path} info #{@disk_check_name[@disk_check_id].to_s} | grep "Total Size:" | awk '{print $3" "$4 }'`.chomp
+		`echo "Verification Return Status : #{@disk_check_return_codes[@disk_check_id].to_s}\tDisk Device Name : #{@disk_check_name[@disk_check_id].to_s}\tDisk Information : #{disk_manufacture} #{disk_capacity}" >> "#{log_file}"`
 		`echo "#{@disk_check_return_results[@disk_check_id].to_s.chomp}" | sed 's/^/	/' >> "#{log_file}"` if @disk_check_return_codes[@disk_check_id] != 0
 		@disk_check_id += 1
 	}
@@ -86,7 +88,7 @@ end
 
 # Check for errors
 if @volume_or_disk_error_detected
-	# generate and populate a temporary log file
+	# generate and populate a temporary log file with return status from the checks
 	temporary_log_file = `mktemp /tmp/volume_check.XXXXXXXXXXXXX`.chomp
 	`/bin/echo -n "Disk Check Report Generated : " >> "#{temporary_log_file}" ; date >> "#{temporary_log_file}" ; echo "" >> "#{temporary_log_file}"`
 	dump_data_to_log(temporary_log_file)

@@ -45,8 +45,10 @@ end
 ENV["PATH"] = `echo $PATH:/usr/sbin/`
 
 # Check attached volumes which are disks
-volumes_to_check = `df -l | grep /dev/disk | awk -F "%    " '{print $2}'`.split("\n")
-disks_to_check = `#{@diskutil_absolute_path} list | grep ^/dev/`
+volumes_to_check = `df -l | grep /dev/disk | awk '{ $1=$1; print }' | awk -F "% " '{print $3}'`.split("\n")
+disks_to_check = `#{@diskutil_absolute_path} list | grep "^/dev/"`.split("\n")
+# volumes_to_check = `df -l | grep /dev/disk | awk -F "%    " '{print $2}'`.split("\n")
+# disks_to_check = `#{@diskutil_absolute_path} list | grep ^/dev/`
 
 def check_volume (volume2check)
 	@volume_check_name[@volume_check_id] = volume2check.to_s

@@ -97,10 +97,10 @@ def run_command_with_realtime_output (command)
   return 0
 end
 
-# volumes_to_check.each { |v|
-#   check_volume(v)
-#   @volume_check_id += 1
-# }
+volumes_to_check.each { |v|
+  check_volume(v)
+  @volume_check_id += 1
+}
 
 disks_to_check.each { |d|
 	# only checks this disk if the disk features a GUID parition map

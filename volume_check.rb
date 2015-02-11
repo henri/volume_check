@@ -7,6 +7,7 @@
 # 1.0 initial release
 # 1.1 resolved path issue related to diskutil (work around)
 # 1.2 bug fixes + added a verbose option which means that no log will be wrtitten and instead progress is displayed.
+# 1.3 added option to skip checking of the boot volume.
 
 # Internal variables
 @volume_or_disk_error_detected = false
@@ -22,9 +23,12 @@
 @log_file_output_path = ARGV[0]
 @diskutil_absolute_path="/usr/sbin/diskutil"
 @verbose_mode_enabled = false
+@skip_boot_volume_check_enabled = false
+@num_arguments = ARGV.length
 
 # Initial checks
-if ARGV.length != 1
+if (@num_arguments == 0) || (@num_arguments == 1 && ARGV[0] == "--skipbootvolume") || (@num_arguments == 2 && ARGV[0] != "--skipbootvolume" && ARGV[0] != "--verbose") || (@num_arguments >= 3) || ( ARGV[0] == "--help" ) || ( ARGV[0] == "-h" )
+  puts ""
 	puts "Usage Example (1) : ./volume_check.rb /path/to/volume_check.log"
   puts "                    # Note that this output file may be overwirtten if it exists."
   puts ""
@@ -32,11 +36,21 @@ if ARGV.length != 1
   puts "                    # Note this will result in progress being displayed on standard error / standard out."
   puts "                    # in addition, use of the --verbose option will mean that logging to a file will not take place."
   puts ""
+  puts "Usage Exmaple (3) : ./volume_check.rb --skipbootvolume /path/to/volume_check.log"
+  puts "                    # The boot volume will not be checked. Note, that the disk upon which boot volume resides"
+  puts "                    # will be checked even with this argument."
+  puts ""
 	exit -1
 end
 
+# Check if verbose and skip boot volume check is enabled (pretty crappy implimentation, patches welcomed)
+if ARGV[0].to_s == "--skipbootvolume" || ARGV[1].to_s == "--skipbootvolume"
+  @skip_boot_volume_check_enabled = true
+  @log_file_output_path = ARGV[1]
+end
+
 # Check if verbose mode is enabled (pretty crappy implimentation, patches welcomed)
-if @log_file_output_path.to_s == "--verbose" 
+if ARGV[0].to_s == "--verbose" || ARGV[1].to_s == "--verbose" 
   @verbose_mode_enabled = true
   @log_file_output_path = "/dev/null"
 end
@@ -45,7 +59,11 @@ end
 ENV["PATH"] = `echo $PATH:/usr/sbin/`
 
 # Check attached volumes which are disks
-volumes_to_check = `df -l | grep /dev/disk | awk '{ $1=$1; print }' | awk -F "% " '{print $3}'`.split("\n")
+if @skip_boot_volume_check_enabled == true
+  volumes_to_check = `df -l | grep /dev/disk | awk '{ $1=$1; print }' | awk -F "% " '{print $3}' | grep -v -x "/"`.split("\n") 
+else
+  volumes_to_check = `df -l | grep /dev/disk | awk '{ $1=$1; print }' | awk -F "% " '{print $3}'`.split("\n")
+end 
 disks_to_check = `#{@diskutil_absolute_path} list | grep "^/dev/"`.split("\n")
 # volumes_to_check = `df -l | grep /dev/disk | awk -F "%    " '{print $2}'`.split("\n")
 # disks_to_check = `#{@diskutil_absolute_path} list | grep ^/dev/`

@@ -19,9 +19,18 @@ Requirements
 Usage Instructions
 ---------
 
-- Run the volume_check.rb script and pass in the path to a log file. Note, this log file may be overwritten so make sure there is nothing important inside.
-- Check the error return code. If it is not 0 then there is a problem with one or more of the checked volumes. Open the log file to see additional details.
+ - Write detailed summary to specified log file '/path/to/volume_check.rb /path/to/logfile.log'
+  1. Run the volume_check.rb script and pass in the path to a log file as the first argment. Note, this log file may be overwritten so make sure there is nothing important inside.
+  2. Check the error return code. If it is not 0 then there is a problem with one or more of the checked volumes. Open the log file to see additional details.
 
+ - Verbose logging (no log file) results written to standard output in realtime '/path/to/volume_check.rb --verbose'
+  1. Run the volume_check.rb script and pass the '--verbose' argument.
+  2. Check the error return code. If it is not 0 then there is a problem with one or more of the checked volumes. Check the output of the command for additional details.
+
+ - Skip the boot volume '/path/to/volume_check.rb --skipbootvolume /path/to/logfile.log' / '/path/to/volume_check.rb --skipbootvolume --verbose'
+  1. Run the volume_check.rb script and pass the '--skipbootvolume' as the first or second argument. This is useful as checking the boot volume can considerably slow down a system during the verification process.
+  2. Check the error return code. If it is not 0 then there is a problem with one or more of the checked volumes. Open the log file or check the output to see additional details. 
+  
 Helpful Links 
 ---------
 The [LBackup Monitoring Storage Systems][2] page provides you with a simple example script which uses sendEmail to send out notifications relating to issues with the file systmems detected by volume_check.rb.

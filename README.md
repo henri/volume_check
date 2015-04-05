@@ -12,7 +12,7 @@ License: [GNU GPL 3.0 License][1]
 
 Requirements
 ---------
- - Mac OS X 10.6 or later (may work with earlier versions of OS X)
+ - Mac OS X 10.6 or later (may work with earlier versions of OS X). Mac OS X 10.7 or later is reccomened.
  - Directly Attached Stroage
 
 

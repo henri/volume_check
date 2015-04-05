@@ -3,11 +3,18 @@
 # Check DAS Volumes and Disks
 # Copyright Henri Shustak 2014
 
+# About : 
+# The name volume_check.rb is slightly misleading as it is also designed to check disk parititions,
+# when supported by the operating system. This script is a wrapper for diskutil and is designed to be run on
+# Mac OS X systems to check the file system integerty of mounted DAS volumes and their assosiated disk parition maps.
+# Project website : http://www.lucid.technology/tools/osx/volume-check
+
 # Versions
 # 1.0 initial release
 # 1.1 resolved path issue related to diskutil (work around)
 # 1.2 bug fixes + added a verbose option which means that no log will be wrtitten and instead progress is displayed.
 # 1.3 added option to skip checking of the boot volume.
+# 1.4 added support for Mac OS 10.6 and possibly earlier versions of Mac OS X (please report back to the project)
 
 # Internal variables
 @volume_or_disk_error_detected = false
@@ -25,6 +32,8 @@
 @verbose_mode_enabled = false
 @skip_boot_volume_check_enabled = false
 @num_arguments = ARGV.length
+@system_greter_than_106 = true
+@darwin_major_version = ""
 
 # Initial checks
 if (@num_arguments == 0) || (@num_arguments == 1 && ARGV[0] == "--skipbootvolume") || (@num_arguments == 2 && ARGV[0] != "--skipbootvolume" && ARGV[0] != "--verbose") || (@num_arguments >= 3) || ( ARGV[0] == "--help" ) || ( ARGV[0] == "-h" )
@@ -41,6 +50,12 @@ if (@num_arguments == 0) || (@num_arguments == 1 && ARGV[0] == "--skipbootvolume
   puts "                    # will be checked even with this argument."
   puts ""
 	exit -1
+end
+
+# Check if the system version is 10.6 or later - this changes the information formating reported by the 'df' command
+@darwin_major_version = `uname -v | awk '{print $4}' | awk -F "." '{print $1}'`
+if @darwin_major_version.to_i <= 10 then
+  @system_greter_than_106 = false
 end
 
 # Check if verbose and skip boot volume check is enabled (pretty crappy implimentation, patches welcomed)
@@ -60,9 +75,21 @@ ENV["PATH"] = `echo $PATH:/usr/sbin/`
 
 # Check attached volumes which are disks
 if @skip_boot_volume_check_enabled == true
-  volumes_to_check = `df -l | grep /dev/disk | awk '{ $1=$1; print }' | awk -F "% " '{print $3}' | grep -v -x "/"`.split("\n") 
+  if @system_greter_than_106 == true then
+    # running 10.7 or later
+    volumes_to_check = `df -l | grep /dev/disk | awk '{ $1=$1; print }' | awk -F "% " '{print $3}' | grep -v -x "/"`.split("\n") 
+  else
+    # running 10.6 or earlier
+    volumes_to_check = `df -l | grep /dev/disk | awk '{ $1=$1; print }' | awk -F "% " '{print $2}' | grep -v -x "/"`.split("\n")     
+  end
 else
-  volumes_to_check = `df -l | grep /dev/disk | awk '{ $1=$1; print }' | awk -F "% " '{print $3}'`.split("\n")
+  if @system_greter_than_106 == true then
+    # running 10.7 or later
+    volumes_to_check = `df -l | grep /dev/disk | awk '{ $1=$1; print }' | awk -F "% " '{print $3}'`.split("\n")
+  else
+    # running 10.6 or earlier
+    volumes_to_check = `df -l | grep /dev/disk | awk '{ $1=$1; print }' | awk -F "% " '{print $2}'`.split("\n")
+  end
 end 
 disks_to_check = `#{@diskutil_absolute_path} list | grep "^/dev/"`.split("\n")
 # volumes_to_check = `df -l | grep /dev/disk | awk -F "%    " '{print $2}'`.split("\n")

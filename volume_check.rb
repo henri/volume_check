@@ -160,12 +160,13 @@ disks_to_check.each { |d|
           	@disk_check_id += 1
   	end
   else
-    #10.6 and earlier
-  	`#{@diskutil_absolute_path} info #{d.chomp} | grep "Partition Type:           GUID_partition_scheme" 2> /dev/null`
-  	if $? == 0
-          	check_disk(d.chomp)
-          	@disk_check_id += 1
-  	end
+    # 10.6 and earlier ; commented out because verifyDisk on 10.6 and earlier reports as depreciated 
+    #                    and fails to work as expected for a depreciated command.
+  	# `#{@diskutil_absolute_path} info #{d.chomp} | grep "Partition Type:           GUID_partition_scheme" 2> /dev/null`
+  	# if $? == 0
+    #       	check_disk(d.chomp)
+    #       	@disk_check_id += 1
+  	# end
   end
 }
 

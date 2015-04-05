@@ -6,7 +6,7 @@
 # About : 
 # The name volume_check.rb is slightly misleading as it is also designed to check disk parititions,
 # when supported by the operating system. This script is a wrapper for diskutil and is designed to be run on
-# Mac OS X systems to check the file system integerty of mounted DAS volumes and their assosiated disk parition maps.
+# Mac OS X systems to check the file system integerty of partitions and also the disk parition maps of DAS systems.
 # Project website : http://www.lucid.technology/tools/osx/volume-check
 
 # Versions
@@ -151,11 +151,22 @@ volumes_to_check.each { |v|
 
 disks_to_check.each { |d|
 	# only checks this disk if the disk features a GUID parition map
-	`#{@diskutil_absolute_path} info #{d.chomp} | grep "Content (IOContent):      GUID_partition_scheme" 2> /dev/null`
-	if $? == 0
-        	check_disk(d.chomp)
-        	@disk_check_id += 1
-	end
+  
+  if @system_greter_than_106 == true then
+    # 10.7 and later
+  	`#{@diskutil_absolute_path} info #{d.chomp} | grep "Content (IOContent):      GUID_partition_scheme" 2> /dev/null`
+  	if $? == 0
+          	check_disk(d.chomp)
+          	@disk_check_id += 1
+  	end
+  else
+    #10.6 and earlier
+  	`#{@diskutil_absolute_path} info #{d.chomp} | grep "Partition Type:           GUID_partition_scheme" 2> /dev/null`
+  	if $? == 0
+          	check_disk(d.chomp)
+          	@disk_check_id += 1
+  	end
+  end
 }
 
 

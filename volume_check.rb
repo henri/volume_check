@@ -151,23 +151,21 @@ volumes_to_check.each { |v|
 
 disks_to_check.each { |d|
 	# only checks this disk if the disk features a GUID parition map
-  
-  if @system_greter_than_106 == true then
-    # 10.7 and later
+    # if @system_greter_than_106 == true then
   	`#{@diskutil_absolute_path} info #{d.chomp} | grep "Content (IOContent):      GUID_partition_scheme" 2> /dev/null`
   	if $? == 0
           	check_disk(d.chomp)
           	@disk_check_id += 1
   	end
-  else
-    # 10.6 and earlier ; commented out because verifyDisk on 10.6 and earlier reports as depreciated 
-    #                    and fails to work as expected for a depreciated command.
-  	# `#{@diskutil_absolute_path} info #{d.chomp} | grep "Partition Type:           GUID_partition_scheme" 2> /dev/null`
-  	# if $? == 0
-    #       	check_disk(d.chomp)
-    #       	@disk_check_id += 1
-  	# end
-  end
+    #else
+      # 10.6 and earlier ; commented out because verifyDisk on 10.6 and earlier reports as depreciated 
+      #                    and fails to work as expected for a depreciated command.
+    	# `#{@diskutil_absolute_path} info #{d.chomp} | grep "Partition Type:           GUID_partition_scheme" 2> /dev/null`
+    	# if $? == 0
+      #       	check_disk(d.chomp)
+      #       	@disk_check_id += 1
+    	# end
+    #end
 }
 
 

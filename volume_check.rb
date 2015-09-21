@@ -4,7 +4,7 @@
 # Copyright Henri Shustak 2014
 #
 # Licence under GNU GPL or later
-# https://www.gnu.org/licenses/gpl.txt
+# http://www.gnu.org/licenses/gpl.txt
 
 # About : 
 # The name volume_check.rb is slightly misleading as it is also designed to check disk parititions,

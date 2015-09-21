@@ -2,6 +2,9 @@
 
 # Check DAS Volumes and Disks
 # Copyright Henri Shustak 2014
+#
+# Licence under GNU GPL or later
+# https://www.gnu.org/licenses/gpl.txt
 
 # About : 
 # The name volume_check.rb is slightly misleading as it is also designed to check disk parititions,
@@ -15,6 +18,7 @@
 # 1.2 bug fixes + added a verbose option which means that no log will be wrtitten and instead progress is displayed.
 # 1.3 added option to skip checking of the boot volume.
 # 1.4 added support for Mac OS 10.6 and possibly earlier versions of Mac OS X (please report back to the project)
+# 1.5 impproved support and bug fixes for Mac OS 10.7
 
 # Internal variables
 @volume_or_disk_error_detected = false
@@ -32,6 +36,7 @@
 @verbose_mode_enabled = false
 @skip_boot_volume_check_enabled = false
 @num_arguments = ARGV.length
+@system_greter_than_107 = true
 @system_greter_than_106 = true
 @darwin_major_version = ""
 
@@ -52,8 +57,11 @@ if (@num_arguments == 0) || (@num_arguments == 1 && ARGV[0] == "--skipbootvolume
 	exit -1
 end
 
-# Check if the system version is 10.6 or later - this changes the information formating reported by the 'df' command
+# Check if the system version is 10.7 or later - this changes the information formating reported by the 'df' command
 @darwin_major_version = `uname -v | awk '{print $4}' | awk -F "." '{print $1}'`
+if @darwin_major_version.to_i <= 11 then
+  @system_greter_than_107 = false
+end
 if @darwin_major_version.to_i <= 10 then
   @system_greter_than_106 = false
 end
@@ -75,7 +83,7 @@ ENV["PATH"] = `echo $PATH:/usr/sbin/`
 
 # Check attached volumes which are disks
 if @skip_boot_volume_check_enabled == true
-  if @system_greter_than_106 == true then
+  if @system_greter_than_107 == true then
     # running 10.7 or later
     volumes_to_check = `df -l | grep /dev/disk | awk '{ $1=$1; print }' | awk -F "% " '{print $3}' | grep -v -x "/"`.split("\n") 
   else
@@ -83,7 +91,7 @@ if @skip_boot_volume_check_enabled == true
     volumes_to_check = `df -l | grep /dev/disk | awk '{ $1=$1; print }' | awk -F "% " '{print $2}' | grep -v -x "/"`.split("\n")     
   end
 else
-  if @system_greter_than_106 == true then
+  if @system_greter_than_107 == true then
     # running 10.7 or later
     volumes_to_check = `df -l | grep /dev/disk | awk '{ $1=$1; print }' | awk -F "% " '{print $3}'`.split("\n")
   else

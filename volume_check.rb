@@ -19,6 +19,7 @@
 # 1.3 added option to skip checking of the boot volume.
 # 1.4 added support for Mac OS 10.6 and possibly earlier versions of Mac OS X (please report back to the project)
 # 1.5 impproved support and bug fixes for Mac OS 10.7
+# 1.6 impproved support and bug fixes for Mac OS 10.11
 
 # Internal variables
 @volume_or_disk_error_detected = false
@@ -99,7 +100,7 @@ else
     volumes_to_check = `df -l | grep /dev/disk | awk '{ $1=$1; print }' | awk -F "% " '{print $2}'`.split("\n")
   end
 end 
-disks_to_check = `#{@diskutil_absolute_path} list | grep "^/dev/"`.split("\n")
+disks_to_check = `#{@diskutil_absolute_path} list | grep "^/dev/" | awk '{print $1}'`.split("\n")
 # volumes_to_check = `df -l | grep /dev/disk | awk -F "%    " '{print $2}'`.split("\n")
 # disks_to_check = `#{@diskutil_absolute_path} list | grep ^/dev/`
 

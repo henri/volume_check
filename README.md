@@ -33,7 +33,10 @@ Usage Instructions
   
 Helpful Links 
 ---------
-The [LBackup Monitoring Storage Systems][2] page provides you with a simple example script which uses sendEmail to send out notifications relating to issues with the file systmems detected by volume_check.rb.
+ - The [LBackup Monitoring Storage Systems][2] page provides you with a simple example script which uses sendEmail to send out notifications relating to issues with the file systmems detected by volume_check.rb.
+
+ - [Download a very basic GUI][3] for checking volumes.
+
 
 Notes relating to using the core script within another system
 ---------
@@ -43,4 +46,5 @@ Should you wish to use this script in another system it is important that you ad
 
   [1]: http://www.gnu.org/copyleft/gpl.html
   [2]: http://www.lbackup.org/monitoring_backup_storage
+  [3]: http://www.lucid.technology/download/volume-check-app
 

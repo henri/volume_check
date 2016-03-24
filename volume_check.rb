@@ -3,7 +3,7 @@
 # Check DAS Volumes and Disks
 # Copyright Henri Shustak 2014
 #
-# Licence under GNU GPL or later
+# Licence under GNU GPL 3 or later
 # http://www.gnu.org/licenses/gpl.txt
 
 # About : 

@@ -35,7 +35,7 @@ Helpful Links
 ---------
  - The [LBackup Monitoring Storage Systems][2] page provides you with a simple example script which uses sendEmail to send out notifications relating to issues with the file systmems detected by volume_check.rb.
 
- - [Download a very basic GUI][3] for checking volumes.
+ - [Download a very basic GUI][3] wrapper for checking volumes without the need of resorting to the terminal. 
 
 
 Notes relating to using the core script within another system

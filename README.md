@@ -1,6 +1,6 @@
 # Volume & Partition Check #
 
-<h1><img src="http://discussions.apple.com/servlet/JiveServlet/showImage/2-18359334-115214/images.jpeg" valign="middle"/></h1>
+<h1><img src="http://support.apple.com/library/APPLE/APPLECARE_ALLGEOS/Product_Help/en_US/PUBLIC_USERS/135122/S0215_DiskUtilityIcon.png" valign="middle"/></h1>
 
 About
 --------

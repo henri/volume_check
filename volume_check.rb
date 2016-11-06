@@ -20,6 +20,7 @@
 # 1.4 added support for Mac OS 10.6 and possibly earlier versions of Mac OS X (please report back to the project)
 # 1.5 impproved support and bug fixes for Mac OS 10.7
 # 1.6 impproved support and bug fixes for Mac OS 10.11
+# 1.7 will now generate a report even if there are no errors detected
 
 # Internal variables
 @volume_or_disk_error_detected = false
@@ -196,24 +197,25 @@ def dump_data_to_log (log_file)
 	}
 end
 
+# generate and populate a temporary log file, then move (destructive) to the specified output logfile.
+if @verbose_mode_enabled == false
+  temporary_log_file = `mktemp /tmp/volume_check.XXXXXXXXXXXXX`.chomp
+  `/bin/echo -n "Disk Check Report Generated : " >> "#{temporary_log_file}" ; date >> "#{temporary_log_file}" ; echo "" >> "#{temporary_log_file}"`
+  dump_data_to_log(temporary_log_file)
+  `mv "#{temporary_log_file}" "#{@log_file_output_path}"`
+end
+
 # Check for errors
 if @volume_or_disk_error_detected
-	# generate and populate a temporary log file
-  if @verbose_mode_enabled == false
-  	temporary_log_file = `mktemp /tmp/volume_check.XXXXXXXXXXXXX`.chomp
-  	`/bin/echo -n "Disk Check Report Generated : " >> "#{temporary_log_file}" ; date >> "#{temporary_log_file}" ; echo "" >> "#{temporary_log_file}"`
-  	dump_data_to_log(temporary_log_file)
-  	`mv "#{temporary_log_file}" "#{@log_file_output_path}"`
-  else
-    puts ""
-    puts "--------------------------------------------------------"
-    puts ""
-    puts " ERRORS DETECTED WITH ONE OR MORE DRIVE(S) / VOLUME(S)!"
-    puts ""
-    puts "--------------------------------------------------------"
-    puts ""
-  end
-	exit 1
+else
+  puts ""
+  puts "--------------------------------------------------------"
+  puts ""
+  puts " ERRORS DETECTED WITH ONE OR MORE DRIVE(S) / VOLUME(S)!"
+  puts ""
+  puts "--------------------------------------------------------"
+  puts ""
+  exit 1  
 end
 
 exit 0

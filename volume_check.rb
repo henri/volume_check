@@ -207,7 +207,6 @@ end
 
 # Check for errors
 if @volume_or_disk_error_detected
-else
   puts ""
   puts "--------------------------------------------------------"
   puts ""
